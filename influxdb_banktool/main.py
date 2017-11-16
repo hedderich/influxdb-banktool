@@ -6,15 +6,25 @@ from fints.client import FinTS3PinTanClient
 from influxdb import InfluxDBClient
 
 from influxdb_banktool.settings import config
+from influxdb_banktool.utils import parse_influxdb_timestamp
 
 
 def main():
-    transactions = get_transactions(start=date(2016, 8, 1))
+    client = InfluxDBClient(*config['influxdb_config'])
+    query = 'SELECT LAST(int_value) FROM balance'
+
+    try:
+        rs = next(client.query(query).get_points())
+        since = parse_influxdb_timestamp(rs['time']) - timedelta(days=2)
+    except (StopIteration, KeyError):
+        since = date.today() - timedelta(days=30)
+
+    transactions = get_transactions(start=since)
     balances = get_balance_by_date(transactions)
-    write_to_influxdb(balances)
+    write_balances_to_influxdb(client, balances)
 
 
-def get_transactions(start=date.today()-timedelta(days=30), end=date.today()):
+def get_transactions(start, end=date.today()):
     fints = FinTS3PinTanClient(**config['fints_config'])
     accounts = fints.get_sepa_accounts()
 
@@ -35,9 +45,7 @@ def get_balance_by_date(data):
     return balance_by_date
 
 
-def write_to_influxdb(data):
-    client = InfluxDBClient(*config['influxdb_config'])
-
+def write_balances_to_influxdb(client, data):
     for key, value in data.items():
         json_body = [
             {
