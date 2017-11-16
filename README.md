@@ -3,7 +3,7 @@
 Create influxdb time series from fints response data, e.g. to plot neat graphs
 with Grafana.
 
-![Example graph](example.png "An example the balance displayed in Grafana")
+<img src="https://raw.githubusercontent.com/hedderich/influxdb-banktool/master/example.png" alt="Example balance displayed in Grafana" height="280" />
 
 ## Setup
 
