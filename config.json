@@ -1,7 +1,7 @@
 {
 	"fints_config": {
-		"blz": "12345678",
-		"username": "123456789",
+		"bank_identifier": "12345678",
+		"user_id": "123456789",
 		"pin": "abcde",
 		"server": "https://example.org/hbci"
 	},

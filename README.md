@@ -19,7 +19,11 @@ or just install directly via pip:
 pip install git+git://github.com/hedderich/influxdb-banktool.git
 ```
 
-Create a config file with your influxdb connection and your FinTS credentials.
+Create a config file with your influxdb connection and your FinTS credentials, using `config.json` as a reference
+```
+mkdir $HOME/.influxdb-banktool
+vi $HOME/.influxdb-banktool/accounts.json
+```
 
 ## Usage
 

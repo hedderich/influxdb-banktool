@@ -3,6 +3,7 @@
 from datetime import date, datetime, timedelta
 
 from fints.client import FinTS3PinTanClient
+from fints.utils import minimal_interactive_cli_bootstrap
 from influxdb import InfluxDBClient
 
 from influxdb_banktool.settings import config
@@ -26,9 +27,18 @@ def main():
 
 def get_transactions(start, end=date.today()):
     fints = FinTS3PinTanClient(**config['fints_config'])
-    accounts = fints.get_sepa_accounts()
+    minimal_interactive_cli_bootstrap(fints)
+    with fints:
+        # Since PSD2, a TAN might be needed for dialog initialization. Let's check if there is one required
+        if fints.init_tan_response:
+            print("A TAN is required", fints.init_tan_response.challenge)
+            tan = input('Please enter TAN:')
+            fints.send_tan(fints.init_tan_response, tan)
 
-    statement = fints.get_statement(accounts[0], start, end)
+        accounts = fints.get_sepa_accounts()
+
+        statement = fints.get_transactions(accounts[0], start, end)
+
     return statement
 
 
