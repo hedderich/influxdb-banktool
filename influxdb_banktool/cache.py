@@ -1,9 +1,9 @@
-from hashlib import sha256
-from base64 import b64encode, b64decode
 import json
 import os
+from base64 import b64encode, b64decode
+from hashlib import sha256
 
-CACHE_PATH = os.path.expanduser('~/.influxdb-banktool/accounts_cache.json')
+CACHE_PATH = os.path.expanduser("~/.influxdb-banktool/accounts_cache.json")
 
 # Read details for item from cache.
 # A hashed representation of item is used as cache key.
@@ -18,6 +18,7 @@ def cache_read(item):
         return b64decode(b64data)
     except:
         return None
+
 
 # Write bytes-like data to cache, in base64 encoding.
 # A hashed representation of item is used as cache key.
@@ -34,4 +35,4 @@ def cache_write(item, data):
     cache[key] = b64data.decode()
 
     with open(CACHE_PATH, "w") as f:
-       json.dump(cache, f)
+        json.dump(cache, f)
